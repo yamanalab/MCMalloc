@@ -1,0 +1,20 @@
+CXX = g++
+CXX_FLAG = -std=c++14 -Wall -O2 -march=native -lpthread -L. -ggdb3 -Wall
+CXX_SHARED_LIB_FLAG = $CXX_FLAG -fpic -shared -ldl
+
+rule app
+    command = $CXX $CXX_FLAG $in -o $out
+    description = building app: $out
+rule obj
+    command = $CXX $CXX_FLAG -c $in -o $out
+    description = building obj: $out
+rule lib
+    command = ar r $out $in
+    description = building lib $out
+rule shared_lib
+    command = $CXX $CXX_SHARED_LIB_FLAG $in -o $out
+    description = building shared lib: $out
+
+build always: phony
+
+build libmcmalloc.so: shared_lib mcmalloc.cpp init_term.cpp memory_chunk_size.cpp batch_mmap.cpp chunk.cpp
